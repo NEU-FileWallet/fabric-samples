@@ -7,23 +7,22 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: org2-install-k8s-builder
+  name: job-scrub-fabric-volumes
 spec:
   backoffLimit: 0
   completions: 1
   template:
     metadata:
-      name: org2-install-k8s-builder
+      name: job-scrub-fabric-volumes
     spec:
       restartPolicy: "Never"
       containers:
         - name: main
-          image: ${K8S_CHAINCODE_BUILDER_IMAGE}:${K8S_CHAINCODE_BUILDER_VERSION}
-          imagePullPolicy: IfNotPresent
+          image: busybox:latest
           command:
             - sh
             - -c
-            - "mkdir -p /mnt/fabric-org2/fabric/external_builders && cp -rv /opt/hyperledger/k8s_builder /mnt/fabric-org2/fabric/external_builders/"
+            - "rm -rvf /mnt/fabric-*/*"
           volumeMounts:
             - name: fabric-org2-volume
               mountPath: /mnt/fabric-org2
@@ -31,3 +30,4 @@ spec:
         - name: fabric-org2-volume
           persistentVolumeClaim:
             claimName: fabric-org2
+
